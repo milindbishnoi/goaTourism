@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1012421617950",
+    "firebase_url": "https://goatourism-8009d.firebaseio.com",
+    "project_id": "goatourism-8009d",
+    "storage_bucket": "goatourism-8009d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012421617950:android:576c192a209a748a53810f",
+        "android_client_info": {
+          "package_name": "com.example.milind.goatourism"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012421617950-se7i4go8rbdtqak16e1piev54kmrlgrq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.milind.goatourism",
+            "certificate_hash": "412df79bdc93bd8d18f24882f38f639845006b7f"
+          }
+        },
+        {
+          "client_id": "1012421617950-iovnincg5larq951tplvtk10i9vjh47d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaQWSVLTHzCPUmZz1pam9ahjOh-MFON5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012421617950-iovnincg5larq951tplvtk10i9vjh47d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
