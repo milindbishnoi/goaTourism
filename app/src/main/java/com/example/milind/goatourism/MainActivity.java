@@ -1,5 +1,6 @@
 package com.example.milind.goatourism;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -14,14 +15,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-
-    String currentPhotoPath;
+    private StorageReference StorageRef;
+    private File currentPhotoPath;
+    private FirebaseDatabase database;
+    private static final int CAMERA_REQUEST = 1888;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -35,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
+        currentPhotoPath = image;
         return image;
     }
 
@@ -60,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+
             }
         }
     }
@@ -71,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
        button =findViewById(R.id.camera1);
        imageView=findViewById(R.id.img);
+       database = FirebaseDatabase.getInstance();
+        StorageRef = FirebaseStorage.getInstance().getReference();
        button.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -79,12 +93,38 @@ public class MainActivity extends AppCompatActivity {
        });
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            imageView.setImageBitmap(imageBitmap);
-//        }
-//    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Uri file = Uri.fromFile(currentPhotoPath);
+        StorageReference riversRef = StorageRef.child("images");
+
+        riversRef.putFile(file)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                       // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        addToFireBaseDB(currentPhotoPath.getAbsolutePath(),taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                        Toast.makeText(MainActivity.this, "avjkafka", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        // ...
+                        Toast.makeText(MainActivity.this, exception.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+    public void addToFireBaseDB(String ImageId , String downloadUrl )
+    {
+        DatabaseReference myRef = database.getReference();
+        //ImagesToUpload image = new ImagesToUpload(ImageId, downloadUrl);
+        //myRef.setValue(image);
+        myRef.child("images").child(ImageId.substring(0,12)).setValue(downloadUrl);
+
+    }
 }
